@@ -22,14 +22,11 @@ import java.util.List;
 @Table (name  = "equipos") //le da nombre a la tabla
 public class Equipo {
 
-    @Id //toma la id como primary
+    @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY) //auto_increment
     private Integer id;
     private String nombre;
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "equipo")
-    //matchea en la db -- LAZY: No la carga mientras no la necesite,
-    // si haces un get del proxy, te trae los datos
-    //FetchType.EAGER trae todoo
     @ToString.Exclude
     private List<Jugador> jugadores;
 }

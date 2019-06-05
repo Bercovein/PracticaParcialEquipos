@@ -19,7 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
-@RequestMapping("/equipo")
+@RequestMapping("/equipos")
 @RestController
 public class ControllerEquipos {
 
@@ -29,10 +29,6 @@ public class ControllerEquipos {
 
     @Autowired
     IEquiposRep equiposRepo;
-    @Autowired
-    IJugadoresRep jugadoresRepo;
-
-
 
     @PostMapping("")
     public void addEquipo(@RequestBody Equipo equipo){
@@ -45,7 +41,7 @@ public class ControllerEquipos {
     }
 
     @GetMapping ("/{id}")
-    public Equipo getById(@PathVariable("id") Integer id){
+    public Equipo getById(@PathVariable("id") final Integer id){
         return equiposRepo.findById(id).orElseThrow(
                 ()-> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(EQUIPO_NOT_FOUND,id)));
     }
@@ -53,7 +49,7 @@ public class ControllerEquipos {
     @PutMapping("")
     public void updateEquipo(@RequestBody Equipo equipo){
 
-        Equipo eq = equiposRepo.findById(equipo.getId()).orElseThrow(()->new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        Equipo eq = equiposRepo.findById(equipo.getId()).orElseThrow(()->new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(EQUIPO_NOT_FOUND,equipo.getId())));
 
         if(!eq.equals(equipo)){
             equiposRepo.save(equipo);
@@ -61,49 +57,10 @@ public class ControllerEquipos {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEquipo(@PathVariable("id") Integer id){
+    public void deleteEquipo(@PathVariable("id") final Integer id){
         Equipo eq = equiposRepo.findById(id).orElseThrow(
                 ()->new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(EQUIPO_NOT_FOUND,id)));
 
-        if(eq!=null){
-            equiposRepo.delete(eq);
-        }
+        equiposRepo.delete(eq);
     }
-
-    @PostMapping("/jugador")
-    public void addJugador (@RequestBody Jugador jugador){
-
-        Equipo eq = jugador.getEquipo();
-
-        jugadoresRepo.save(jugador);
-        equiposRepo.save(eq);
-    }
-
-    @PutMapping("/jugador")
-    public void updateJugador(@RequestBody Jugador jugador){
-
-        Equipo eq = jugador.getEquipo();
-
-        jugadoresRepo.save(jugador);
-        equiposRepo.save(eq);
-    }
-
-    @GetMapping("/jugadores")
-    public List<Jugador> getAllJugadores(){
-        return jugadoresRepo.findAll();
-    }
-    @GetMapping("/jugadores/{id}")
-    public Jugador getJugadorById(@PathVariable Integer id){
-        return jugadoresRepo.findById(id).orElseThrow(
-                ()-> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(JUGADOR_NOT_FOUND,id)));
-    }
-
-    @DeleteMapping("/jugadores/{id}")
-    public void deleteJugador(@PathVariable Integer id){
-        Jugador jug = jugadoresRepo.findById(id).orElseThrow(
-                ()->new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(JUGADOR_NOT_FOUND,id)));
-
-        jugadoresRepo.delete(jug);
-    }
-
 }
