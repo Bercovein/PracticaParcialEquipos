@@ -4,6 +4,8 @@ import com.example.SimulacroParcial.domain.Equipo;
 import com.example.SimulacroParcial.domain.Jugador;
 import com.example.SimulacroParcial.repository.IEquiposRep;
 import com.example.SimulacroParcial.repository.IJugadoresRep;
+import com.example.SimulacroParcial.services.EquipoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,44 +25,32 @@ import java.util.List;
 @RestController
 public class ControllerEquipos {
 
-
-    private static String EQUIPO_NOT_FOUND = "No existe el equipo con la id: %s";
-    private static String JUGADOR_NOT_FOUND = "No existe el equipo con la id: %s";
-
     @Autowired
-    IEquiposRep equiposRepo;
+    EquipoService equiposService;
 
     @PostMapping("")
     public void addEquipo(@RequestBody Equipo equipo){
-        equiposRepo.save(equipo);
+        equiposService.addEquipo(equipo);
     }
 
     @GetMapping ("")
     public List<Equipo> getAllEquipos(){
-        return equiposRepo.findAll();
+        return equiposService.getAllEquipos();
     }
 
     @GetMapping ("/{id}")
     public Equipo getById(@PathVariable("id") final Integer id){
-        return equiposRepo.findById(id).orElseThrow(
-                ()-> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(EQUIPO_NOT_FOUND,id)));
+        return equiposService.getById(id);
     }
 
     @PutMapping("")
     public void updateEquipo(@RequestBody Equipo equipo){
 
-        Equipo eq = equiposRepo.findById(equipo.getId()).orElseThrow(()->new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(EQUIPO_NOT_FOUND,equipo.getId())));
-
-        if(!eq.equals(equipo)){
-            equiposRepo.save(equipo);
-        }
+        equiposService.updateEquipo(equipo);
     }
 
     @DeleteMapping("/{id}")
     public void deleteEquipo(@PathVariable("id") final Integer id){
-        Equipo eq = equiposRepo.findById(id).orElseThrow(
-                ()->new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(EQUIPO_NOT_FOUND,id)));
-
-        equiposRepo.delete(eq);
+        equiposService.deleteEquipo(id);
     }
 }

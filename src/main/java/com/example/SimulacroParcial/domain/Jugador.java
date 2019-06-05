@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 
-@Data //getter, setter, equals, hashcode, tostring etc..
-@AllArgsConstructor //genera un constructor con todos los argumentos
-@NoArgsConstructor //genera un constructor sin argumentos
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Jugador {
 
